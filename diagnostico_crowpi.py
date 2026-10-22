@@ -38,8 +38,12 @@ ORDEN RECOMENDADO DE PRUEBAS
 
 NOTA SOBRE PINES COMPARTIDOS
   Algunos dispositivos reutilizan los mismos GPIO (la matriz de
-  botones usa 27,22,5,6 / 25,26,19,13). Por eso cada prueba se
-  ejecuta de forma AISLADA y libera sus pines al terminar.
+  botones usa 27,22,5,6 / 25,26,19,13). Por eso es necesario comprobar el estado
+  de los DIP Switch.
+
+  Al utilizar la matriz de botones es necesario activar el DIP izruierdo
+  Al utlizar el vibradorr, el tilt sensor, servo y motor a pasos, es
+  necesario activar el DIP derecho
 """
 
 import sys
@@ -425,30 +429,66 @@ def prueba_matriz_led():
     try:
         from luma.led_matrix.device import max7219
         from luma.core.interface.serial import spi, noop
+        from luma.core.render import canvas
         from luma.core.legacy import show_message
         from luma.core.legacy.font import proportional, CP437_FONT
     except ImportError:
         print("  [X] Falta la libreria luma.led_matrix. Omite esta prueba.")
         registrar("Matriz LED", False)
         return
-    instruccion("Mira la matriz LED de 8x32.")
-    esperado("Aparece el mensaje 'TEST OK' desplazandose.")
-    serial = spi(port=0, device=0, gpio=noop())
-    matrix = max7219(serial, width=32, height=8, block_orientation=-90)
-    try:
-        matrix.clear()
-        show_message(matrix, "TEST OK", fill="white",
-                     font=proportional(CP437_FONT), scroll_delay=0.1)
-        time.sleep(1)
-        matrix.clear()
-    finally:
-        try:
-            matrix.clear()
-        except Exception:
-            pass
-    ok = preguntar("¿Se vio el mensaje en la matriz LED?")
-    registrar("Matriz LED", ok)
 
+    instruccion("Mira la matriz LED de 8x32.")
+    esperado("Primero TODOS los pixeles se encienden, luego pasa el texto 'TEST OK'.")
+
+    # Distintas versiones de CrowPi cablean la matriz a CE0 (device=0) o
+    # CE1 (device=1), y segun la libreria se construye de una forma u otra.
+    # Se prueban varias combinaciones hasta que una funcione.
+    #   modo "wh"    -> como examples/limpia.py  (width=32, height=8)
+    #   modo "casc4" -> 4 modulos MAX7219 en cascada (panel 8x32)
+    configuraciones = [
+        (1, -90, "wh"),
+        (0, -90, "wh"),
+        (1, -90, "casc4"),
+        (0, -90, "casc4"),
+    ]
+
+    for device_id, orient, modo in configuraciones:
+        print("\n  Probando SPI port=0 device=%d block_orientation=%d modo=%s ..."
+              % (device_id, orient, modo))
+        matrix = None
+        try:
+            serial = spi(port=0, device=device_id, gpio=noop())
+            if modo == "wh":
+                matrix = max7219(serial, width=32, height=8, block_orientation=orient)
+            else:
+                matrix = max7219(serial, cascaded=4,
+                                 block_orientation=orient, rotate=0)
+            matrix.clear()
+            # 1) Test de pixeles: encender todo (confirma que la matriz responde)
+            with canvas(matrix) as draw:
+                draw.rectangle(matrix.bounding_box, outline="white", fill="white")
+            time.sleep(1.5)
+            matrix.clear()
+            # 2) Test de texto desplazandose
+            show_message(matrix, "TEST OK", fill="white",
+                         font=proportional(CP437_FONT), scroll_delay=0.1)
+            matrix.clear()
+        except Exception as e:
+            print("   [X] Fallo con esta configuracion: %s" % e)
+            continue
+
+        if preguntar("¿Se ilumino la matriz (todo encendido + texto 'TEST OK')?"):
+            print("  Configuracion que funciono: device=%d, orient=%d, modo=%s"
+                  % (device_id, orient, modo))
+            registrar("Matriz LED", True)
+            return
+
+    print("  Ninguna configuracion produjo imagen visible.")
+    print("  SUGERENCIAS:")
+    print("    - Habilita SPI:  sudo raspi-config -> Interface Options -> SPI")
+    print("    - Verifica que la matriz este conectada al bus SPI de la CrowPi.")
+    print("    - Prueba orientaciones: 0, 90, -90, 180.")
+    registrar("Matriz LED", False)
 
 # ------------------------------------------------------------------
 # 5. DISPOSITIVOS ESPECIALES
@@ -594,6 +634,7 @@ def prueba_matriz_botones():
         print("      servo=25, stepper=5,6,13,19) y que no haya otra prueba activa.")
         print("    - Ejecuta con 'sudo'.")
     registrar("Matriz botones", ok)
+
 
 
 # ------------------------------------------------------------------
