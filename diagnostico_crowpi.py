@@ -53,7 +53,7 @@ PINES = {
     "buzzer":     18,
     "rele":       21,
     "vibrador":   27,
-    "boton":      11,
+    "boton":      26,
     "toque":      17,
     "movimiento": 23,
     "inclinacion": 22,
