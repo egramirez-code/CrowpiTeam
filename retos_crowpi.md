@@ -1,8 +1,5 @@
 # BANCO DE RETOS DE INTEGRACIÓN — CrowPi
 
-> **Para el equipo.** Resuelve cada reto SIN mirar la carpeta `soluciones/`.
-> Las soluciones están separadas para que solo el entrenador las revise.
-
 ## Cómo usar este banco
 
 1. Lee el **enunciado** y los **dispositivos** implicados.
