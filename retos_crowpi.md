@@ -184,13 +184,3 @@
 **Solución:** `soluciones/reto_18_estacion_meteorologica.py`
 
 ---
-
-## Progresión de dificultad (resumen)
-
-| Nivel | Retos | Habilidad que entrena |
-|-------|-------|-----------------------|
-| 1 | 01–04 | entrada → salida directa |
-| 2 | 05–08 | umbrales y flancos |
-| 3 | 09–12 | sensores/actuadores I2C y pantallas |
-| 4 | 13–16 | varios actuadores y estado acumulado |
-| 5 | 17–18 | menús, máquinas de estado, multitarea |
