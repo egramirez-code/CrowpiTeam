@@ -9,34 +9,7 @@
    3. Instanciar cada dispositivo con su pin/dirección.
    4. Escribir la lógica de conexión.
    5. Envolver en el esqueleto universal (while + try/except + limpieza).
-3. Consulta solo la tabla de API (`API_dispositivos_imprimir.md`) si lo necesitas.
-4. Compara con `soluciones/reto_XX_*.py` al terminar.
 
-**Orden ascendente:** Nivel 1 (2 dispositivos) → Nivel 5 (menús y estado).
-
-## Referencia rápida de dispositivos
-
-| Dispositivo | Pin / Dirección |
-|-------------|-----------------|
-| LED | GPIO 20 |
-| Buzzer | GPIO 18 |
-| Relé | GPIO 21 |
-| Vibrador | GPIO 27 |
-| Ventilador | GPIO 26 |
-| Botón | GPIO 11 |
-| Toque | GPIO 17 |
-| Movimiento (PIR) | GPIO 23 |
-| Inclinación | GPIO 22 |
-| Sonido | GPIO 24 |
-| Servo | GPIO 25 |
-| Ultrasonido | echo 12 / trigger 16 |
-| Stepper | GPIO 5, 6, 13, 19 |
-| Matriz de botones | filas 27,22,5,6 / cols 25,26,19,13 |
-| DHT20 | I2C 0x38 |
-| LCD 16x2 | I2C 0x21 (vía MCP23008) |
-| Sensor de luz | I2C 0x5c |
-| Display 7 segmentos | I2C (HT16K33) |
-| Matriz LED | SPI |
 
 > **Ojo con los pines compartidos.** La matriz de botones usa 27, 22, 5, 6, 25, 19, 13,
 > que chocan con vibrador (27), inclinación (22), servo (25) y stepper (5,6,13,19).
