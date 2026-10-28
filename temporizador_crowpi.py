@@ -1,21 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Temporizador descendente para CrowPi
-=====================================
-- Interfaz grafica con Tkinter y numeros grandes (MM:SS).
-- Al llegar a 0 hace parpadear la pantalla y suena el buzzer (GPIO 18).
 
-USO
-  python3 temporizador_crowpi.py
-  (si no arranca el buzzer por permisos de GPIO:  sudo python3 temporizador_crowpi.py)
+#Temporizador descendente para CrowPi
 
-CONTROLES
-  - Caja "Minutos": define la duracion (1 a 99).
-  - Boton "Iniciar/Pausar"  ...  tecla ESPACIO
-  - Boton "Reiniciar"       ...  tecla R
-  - Boton "Salir"           ...  tecla ESC
-"""
 import tkinter as tk
 from tkinter import font as tkfont
 
@@ -25,10 +12,10 @@ except ImportError:
     Buzzer = None
 
 # ----------------------- Configuracion -----------------------
-BUZZER_PIN = 18            # mismo pin que examples/buzzer.py
-DURACION_DEFECTO_MIN = 1   # minutos al abrir
+BUZZER_PIN = 18            
+DURACION_DEFECTO_MIN = 1   # 
 COLOR_FONDO = "#101418"
-COLOR_TEXTO = "#39FF14"    # verde fosforito
+COLOR_TEXTO = "#39FF14"    # verde fosfo
 COLOR_ALERTA = "#FF3B30"   # rojo
 
 
@@ -36,7 +23,7 @@ class Temporizador:
     def __init__(self, root):
         self.root = root
 
-        # Buzzer (si gpiozero no esta disponible, el temporizador sigue funcionando)
+        
         self.buzzer = None
         if Buzzer is not None:
             try:
@@ -100,7 +87,7 @@ class Temporizador:
             self.iniciar()
 
     def iniciar(self):
-        if self.restante <= 0:      # si ya termino, reinicia con el valor actual
+        if self.restante <= 0:      
             self.reiniciar()
         self.en_marcha = True
         self._tick()
@@ -137,9 +124,8 @@ class Temporizador:
         self.en_marcha = False
         self._refrescar()
         self.lbl.config(fg=COLOR_ALERTA)
-        self.root.bell()                      # pitido del sistema (si hay)
-        if self.buzzer is not None:
-            # 15 pitidos cortos en segundo plano (no bloquea la ventana)
+        self.root.bell()                      
+        if self.buzzer is not None:  
             self.buzzer.beep(on_time=0.2, off_time=0.15, n=15, background=True)
         self._parpadear(8)
         print("Temporizador finalizado")
